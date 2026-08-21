@@ -1,5 +1,6 @@
-// Manager Dashboard: guard the page, then load/create/edit/delete
-// the logged-in manager's own events via the Event CRUD API.
+// Manager Dashboard: guard the page, then load/create/edit/delete the
+// logged-in manager's own events, plus (Part 3) view participants for
+// each one via the registrations API.
 
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
@@ -23,23 +24,25 @@ function authHeaders() {
 function createManagerEventRow(event) {
   const price = Number(event.ticket_price);
   const priceLabel = price === 0 ? 'Free' : `$${price}`;
-  const dateLabel = new Date(event.event_date).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric'
-  });
+  const dateLabel = formatDateLong(event.event_date); // from main.js — timezone-safe
   const imageUrl = `/images/${event.image || 'event-placeholder-1.jpg'}`;
 
   return `
-    <div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-paper rounded-lg shadow-sm p-4">
-      <div class="w-full sm:w-24 h-24 rounded-md bg-moss-100 bg-cover bg-center flex-shrink-0" style="background-image:url('${imageUrl}')"></div>
-      <div class="flex-1">
-        <span class="font-stub text-[11px] uppercase tracking-widest text-moss">${event.category}</span>
-        <h3 class="font-display font-semibold text-lg leading-snug">${event.title}</h3>
-        <p class="text-sm text-ink/60">${event.location} &middot; ${dateLabel} &middot; ${priceLabel}</p>
+    <div class="bg-paper rounded-lg shadow-sm p-4">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="w-full sm:w-24 h-24 rounded-md bg-moss-100 bg-cover bg-center flex-shrink-0" style="background-image:url('${imageUrl}')"></div>
+        <div class="flex-1">
+          <span class="font-stub text-[11px] uppercase tracking-widest text-moss">${event.category}</span>
+          <h3 class="font-display font-semibold text-lg leading-snug">${event.title}</h3>
+          <p class="text-sm text-ink/60">${event.location} &middot; ${dateLabel} &middot; ${priceLabel}</p>
+        </div>
+        <div class="flex gap-2 flex-shrink-0 flex-wrap">
+          <button data-participants="${event.event_id}" class="px-4 py-2 text-sm rounded-full border-2 border-moss text-moss hover:bg-moss hover:text-white transition-colors">Participants</button>
+          <button data-edit="${event.event_id}" class="px-4 py-2 text-sm rounded-full border-2 border-ink text-ink hover:bg-ink hover:text-white transition-colors">Edit</button>
+          <button data-delete="${event.event_id}" class="px-4 py-2 text-sm rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors">Delete</button>
+        </div>
       </div>
-      <div class="flex gap-2 flex-shrink-0">
-        <button data-edit="${event.event_id}" class="px-4 py-2 text-sm rounded-full border-2 border-ink text-ink hover:bg-ink hover:text-white transition-colors">Edit</button>
-        <button data-delete="${event.event_id}" class="px-4 py-2 text-sm rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors">Delete</button>
-      </div>
+      <div id="participants-${event.event_id}" class="hidden mt-3 pt-3 border-t border-ink/10"></div>
     </div>`;
 }
 
@@ -61,6 +64,35 @@ async function loadMyEvents() {
     }
   } catch (err) {
     listEl.innerHTML = `<p class="text-red-600 text-center py-8">${err.message}</p>`;
+  }
+}
+
+// Toggles a small inline panel of who's registered for one event.
+// Loads once per page visit, then just shows/hides on repeat clicks.
+async function toggleParticipants(eventId, container) {
+  if (container.dataset.loaded === 'true') {
+    container.classList.toggle('hidden');
+    return;
+  }
+
+  container.classList.remove('hidden');
+  container.innerHTML = '<p class="text-sm text-ink/50 py-2">Loading...</p>';
+
+  try {
+    const res = await fetch(`/api/registrations/event/${eventId}`, { headers: authHeaders() });
+    const participants = await res.json();
+    if (!res.ok) throw new Error(participants.message || 'Could not load participants');
+
+    container.innerHTML = participants.length === 0
+      ? '<p class="text-sm text-ink/50 py-2">No one has registered yet.</p>'
+      : participants.map((p) => `
+          <p class="text-sm py-1.5 border-b border-ink/10 last:border-0 flex flex-wrap justify-between gap-2">
+            <span>${p.full_name} &middot; ${p.email}</span>
+            <span class="font-stub text-xs uppercase text-moss">${p.payment_status}</span>
+          </p>`).join('');
+    container.dataset.loaded = 'true';
+  } catch (err) {
+    container.innerHTML = `<p class="text-sm text-red-600 py-2">${err.message}</p>`;
   }
 }
 
@@ -138,6 +170,7 @@ async function handleFormSubmit(e) {
 async function handleListClick(e) {
   const editId = e.target.dataset.edit;
   const deleteId = e.target.dataset.delete;
+  const participantsId = e.target.dataset.participants;
 
   if (editId) {
     const event = myEvents.find((ev) => String(ev.event_id) === editId);
@@ -148,6 +181,10 @@ async function handleListClick(e) {
     if (!confirm('Delete this event? This cannot be undone.')) return;
     const res = await fetch(`/api/events/${deleteId}`, { method: 'DELETE', headers: authHeaders() });
     if (res.ok) loadMyEvents();
+  }
+
+  if (participantsId) {
+    await toggleParticipants(participantsId, document.getElementById(`participants-${participantsId}`));
   }
 }
 

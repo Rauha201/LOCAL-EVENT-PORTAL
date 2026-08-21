@@ -4,6 +4,7 @@
 // a sandbox payment step for paid events, and calendar export either
 // way.
 
+
 function getEventIdFromURL() {
   return new URLSearchParams(window.location.search).get('id');
 }

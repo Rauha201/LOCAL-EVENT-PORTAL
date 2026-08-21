@@ -3,6 +3,7 @@
 // easy to extend later (e.g. adding a "findRegisteredEvents" query
 // once Part 3 builds registrations).
 
+
 const pool = require('../config/db');
 
 const UserModel = {

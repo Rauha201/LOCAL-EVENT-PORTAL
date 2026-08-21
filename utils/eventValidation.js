@@ -4,6 +4,7 @@
 // eventController.js used to have this inline, which meant testing
 // it dragged in the whole models/config chain.
 
+
 const CATEGORIES = ['Concert', 'Meetup', 'Workshop', 'Sports', 'Festival'];
 
 function todayDateString() {

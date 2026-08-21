@@ -1,4 +1,4 @@
-/*-- =====================================================
+-- =====================================================
 --  Local Event Portal — Database Schema (Part 1)
 -- =====================================================
 --  Run this whole file once in MySQL Workbench (or the
@@ -68,3 +68,58 @@ CREATE TABLE IF NOT EXISTS registrations (
   FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
   UNIQUE KEY unique_registration (user_id, event_id)  -- can't book the same event twice
 );
+
+-- ---------------------------------------------------
+-- INDEXES (Part 4 — "Final SQL scripts")
+-- ---------------------------------------------------
+-- Foreign key columns (manager_id, user_id, event_id above) are
+-- indexed automatically by InnoDB when the constraint is created, so
+-- those don't need anything extra. These two aren't foreign keys, but
+-- are the two columns everything else in the app already sorts or
+-- filters events by — the homepage's "Upcoming" sort and the Browse
+-- Events search both read event_date and category on every request.
+--
+-- Note: unlike CREATE TABLE, MySQL's CREATE INDEX has no
+-- "IF NOT EXISTS" option — running this file twice against the same
+-- database (without dropping it first) will error with "Duplicate key
+-- name" on these two lines. That's expected; this script is meant to
+-- be run once against a fresh database, same as the rest of the file.
+CREATE INDEX idx_events_date ON events(event_date);
+CREATE INDEX idx_events_category ON events(category);
+
+-- =====================================================
+--  Admin System (Add-on)
+-- =====================================================
+
+-- ---------------------------------------------------
+-- ADMINS — separate table, same shape as users/managers
+-- ---------------------------------------------------
+CREATE TABLE IF NOT EXISTS admins (
+  admin_id    INT AUTO_INCREMENT PRIMARY KEY,
+  full_name   VARCHAR(100) NOT NULL,
+  email       VARCHAR(150) NOT NULL UNIQUE,
+  password    VARCHAR(255) NOT NULL,       -- bcrypt hash, never plain text
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- The default administrator (admin@example.com / admin123) is
+-- deliberately NOT inserted here as a hardcoded hash. It is seeded
+-- automatically the first time the server starts — see
+-- utils/seedAdmin.js — using the project's own bcrypt library and
+-- salt rounds, the same way every other password in this app is
+-- hashed. seedAdmin.js only creates it if no admin exists yet, so
+-- restarting the server never re-creates or overwrites it.
+
+-- ---------------------------------------------------
+-- MANAGER APPROVAL — lets an admin moderate manager accounts
+-- without touching the existing registration/login flow. New
+-- self-registered managers default to 'approved', so nothing that
+-- already works changes behavior; a manager only becomes 'pending'
+-- or 'rejected' if an admin acts on it from the Admin > Managers page.
+-- ---------------------------------------------------
+-- Note: like CREATE INDEX above, plain ALTER TABLE ADD COLUMN has no
+-- "IF NOT EXISTS" on older MySQL — running this file twice against
+-- the same database (without dropping it first) will error with
+-- "Duplicate column name". That's expected; this script is meant to
+-- be run once against a fresh database, same as the rest of the file.
+ALTER TABLE managers
+  ADD COLUMN status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'approved' AFTER password;

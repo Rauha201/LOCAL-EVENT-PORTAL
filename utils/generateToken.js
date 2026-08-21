@@ -9,3 +9,4 @@ function generateToken(id, role) {
 }
 
 module.exports = generateToken;
+

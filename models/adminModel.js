@@ -1,3 +1,4 @@
+
 // Deliberately a mirror of userModel.js / managerModel.js — same
 // method names, same shapes — so it fits the existing pattern instead
 // of inventing a new one. There is no self-registration endpoint for

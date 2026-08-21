@@ -55,7 +55,10 @@ async function handleAuthSubmit(e, endpointSuffix, buildBody) {
     localStorage.setItem('token', data.token);
     localStorage.setItem('role', role);
     localStorage.setItem('fullName', data.user.fullName);
-    window.location.href = '/index.html';
+    // Added for the Admin System: only the destination changes per
+    // role. Users and managers still land on '/index.html' exactly
+    // as before.
+    window.location.href = role === 'admin' ? '/admin-dashboard.html' : '/index.html';
   } catch (err) {
     showMessage(messageEl, 'Could not reach the server. Is it running?', true);
   } finally {

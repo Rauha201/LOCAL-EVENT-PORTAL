@@ -1,3 +1,4 @@
+
 const bcrypt = require('bcryptjs');
 const UserModel = require('../models/userModel');
 const generateToken = require('../utils/generateToken');

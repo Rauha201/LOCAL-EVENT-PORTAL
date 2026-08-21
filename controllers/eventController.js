@@ -1,3 +1,4 @@
+//update
 const EventModel = require('../models/eventModel');
 
 const CATEGORIES = ['Concert', 'Meetup', 'Workshop', 'Sports', 'Festival'];

@@ -50,6 +50,14 @@ async function loginManager(req, res, next) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    // Added for the Admin System: managers default to 'approved' on
+    // self-registration (see database/schema.sql), so this only ever
+    // blocks someone an admin has explicitly rejected — everyone else
+    // logs in exactly as before.
+    if (manager.status === 'rejected') {
+      return res.status(403).json({ message: 'Your manager account has been rejected by the administrator' });
+    }
+
     const token = generateToken(manager.manager_id, 'manager');
     res.json({
       token,

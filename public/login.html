@@ -14,9 +14,7 @@
 </head>
 <body class="bg-dusk text-ink font-body min-h-screen flex flex-col">
 
-  <header class="px-5 py-6 text-center">
-    <a href="/index.html" class="font-display font-bold text-xl text-cloth">LocalLoop</a>
-  </header>
+  <div id="site-header" data-variant="minimal"></div>
 
   <main class="flex-1 flex items-center justify-center px-5 pb-16">
     <div class="w-full max-w-md bg-paper rounded-lg shadow-2xl px-6 py-8 sm:px-10 sm:py-10">
@@ -30,6 +28,9 @@
         </button>
         <button type="button" data-role="manager" class="role-tab flex-1 py-2 rounded-full transition-colors">
           I'm an Event Manager
+        </button>
+        <button type="button" data-role="admin" class="role-tab flex-1 py-2 rounded-full transition-colors">
+          I'm an Admin
         </button>
       </div>
 
@@ -56,6 +57,7 @@
     </div>
   </main>
 
+  <script src="/js/main.js"></script>
   <script src="/js/auth.js"></script>
 </body>
 </html>

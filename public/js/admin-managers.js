@@ -5,6 +5,7 @@
 // through — nothing about the existing manager register/login flow
 // changes because of it.
 
+
 let allManagers = [];
 
 const STATUS_BADGE = {

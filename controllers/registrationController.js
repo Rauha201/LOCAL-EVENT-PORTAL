@@ -1,3 +1,4 @@
+
 const RegistrationModel = require('../models/registrationModel');
 const EventModel = require('../models/eventModel');
 

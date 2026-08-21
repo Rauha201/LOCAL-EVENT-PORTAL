@@ -4,6 +4,7 @@
 // registrant's name/email so a manager's participant list is useful
 // without a second request.
 
+
 const pool = require('../config/db');
 
 const RegistrationModel = {

@@ -3,6 +3,7 @@
 // client-side, so it scales the same way as the rest of the app's
 // search (see public/js/events.js).
 
+
 let allUsers = [];
 
 function renderUsersTable(users) {

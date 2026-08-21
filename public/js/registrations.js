@@ -2,6 +2,7 @@
 // boundary" pattern as dashboard.js: the real check is
 // authorize('user') on GET /api/registrations/mine.
 
+
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
 

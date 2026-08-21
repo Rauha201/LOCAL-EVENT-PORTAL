@@ -1,3 +1,4 @@
+
 // Deliberately a mirror of userModel.js. Managers and users are
 // separate tables (see database/schema.sql) so keeping their model
 // files parallel — same method names, same shapes — makes the

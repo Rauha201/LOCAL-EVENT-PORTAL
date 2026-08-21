@@ -3,6 +3,7 @@
 // browser (see the module.exports guards at the bottom of
 // public/js/main.js and public/js/event-details.js, and the
 // zero-dependency utils/eventValidation.js).
+
 //
 // Run with:  node --test
 // (Node's built-in test runner — no npm install required.)

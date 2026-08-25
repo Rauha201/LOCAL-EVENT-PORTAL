@@ -2,7 +2,6 @@
 // feed from GET /api/admins/stats. The auth guard, sidebar, and fetch
 // helper all live in admin.js, loaded before this file.
 
-
 document.addEventListener('DOMContentLoaded', async () => {
   renderAdminNav('/admin-dashboard.html');
 

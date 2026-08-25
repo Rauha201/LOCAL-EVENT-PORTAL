@@ -4,7 +4,6 @@
 // simplest possible approach for a dataset this size, and it means
 // zero extra network round trips while typing in the search box.
 
-
 let allEvents = [];
 
 function readCategoryFromURL() {

@@ -3,7 +3,6 @@
 // RegistrationModel.findAll(), models/registrationModel.js) is
 // already everything a row needs, so a table is the whole answer.
 
-
 let allRegistrations = [];
 
 function renderRegistrationsTable(registrations) {

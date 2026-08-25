@@ -6,7 +6,6 @@
 // here would mean fighting its DOM assumptions instead of just
 // writing a matching pair of files.
 
-
 const ADMIN_API = '/api/admins';
 
 const adminToken = localStorage.getItem('token');

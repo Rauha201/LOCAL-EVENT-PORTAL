@@ -199,11 +199,62 @@ async function submitRegistration(eventId) {
       messageEl.classList.remove('hidden');
       return;
     }
-    loadEvent(); // reload to show the "you're registered" state + updated capacity
+    // Registered successfully — reload to show the "you're registered"
+    // state + updated capacity, then drop a receipt download button
+    // right where the payment form was, so it's the very next thing
+    // the user sees after paying.
+    await loadEvent();
+    showReceiptDownload(data.registrationId);
   } catch (err) {
     messageEl.textContent = 'Could not reach the server.';
     messageEl.classList.remove('hidden');
   }
+}
+
+// Same fetch+blob pattern as the .ics calendar download above, plus
+// an Authorization header since GET /api/registrations/:id/receipt
+// requires the caller's own JWT (see registrationController.js).
+async function downloadReceipt(registrationId, btn) {
+  const token = localStorage.getItem('token');
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Preparing...';
+  try {
+    const res = await fetch(`/api/registrations/${registrationId}/receipt`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Could not generate receipt');
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `receipt-${registrationId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+function showReceiptDownload(registrationId) {
+  const section = document.getElementById('registration-section');
+  const banner = document.createElement('div');
+  banner.className = 'mt-3 flex items-center gap-3 flex-wrap';
+  banner.innerHTML = `
+    <span class="text-moss font-medium text-sm">Payment successful!</span>
+    <button id="receipt-btn" class="px-5 py-2 text-sm rounded-full border-2 border-ink text-ink font-medium hover:bg-ink hover:text-white transition-colors">
+      Download Receipt (PDF)
+    </button>`;
+  section.appendChild(banner);
+  document.getElementById('receipt-btn').addEventListener('click', (e) => downloadReceipt(registrationId, e.target));
 }
 
 // Guarded the same way as main.js — lets tests/unit.test.js require()

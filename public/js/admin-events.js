@@ -2,7 +2,6 @@
 // their own event (controllers/eventController.js), the admin delete
 // route has no ownership check — an admin can remove any event.
 
-
 let allEvents = [];
 
 function renderEventsTable(events) {

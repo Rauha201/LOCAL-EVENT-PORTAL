@@ -11,6 +11,7 @@
 // whole problem — see formatDateLabel() in public/js/main.js, which
 // parses that string directly instead of building a Date from it.
 
+
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 

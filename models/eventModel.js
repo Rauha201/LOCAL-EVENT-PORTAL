@@ -1,4 +1,3 @@
-
 // Plain SQL, same style as userModel.js / managerModel.js. findAll()
 // and findById() join in the manager's name — small enough not to
 // need a separate query, and Part 3's Event Details page can reuse

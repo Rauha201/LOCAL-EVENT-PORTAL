@@ -123,3 +123,4 @@ CREATE TABLE IF NOT EXISTS admins (
 -- be run once against a fresh database, same as the rest of the file.
 ALTER TABLE managers
   ADD COLUMN status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'approved' AFTER password;
+

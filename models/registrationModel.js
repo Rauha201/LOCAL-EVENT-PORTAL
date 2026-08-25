@@ -4,7 +4,6 @@
 // registrant's name/email so a manager's participant list is useful
 // without a second request.
 
-
 const pool = require('../config/db');
 
 const RegistrationModel = {
@@ -34,6 +33,27 @@ const RegistrationModel = {
       [userId]
     );
     return rows;
+  },
+
+  // Powers the payment receipt PDF (GET /api/registrations/:id/receipt).
+  // Scoped to userId so a user can only ever fetch their own receipt —
+  // the ownership check lives in the query itself, not just the
+  // controller, the same defense-in-depth pattern as
+  // getEventParticipants()'s manager_id check in
+  // registrationController.js.
+  async findByIdForUser(registrationId, userId) {
+    const [rows] = await pool.query(
+      `SELECT r.registration_id, r.payment_status, r.registered_at,
+              u.full_name AS user_name, u.email AS user_email,
+              e.title AS event_title, e.event_date, e.event_time,
+              e.location, e.organizer, e.ticket_price
+       FROM registrations r
+       JOIN users u ON r.user_id = u.user_id
+       JOIN events e ON r.event_id = e.event_id
+       WHERE r.registration_id = ? AND r.user_id = ?`,
+      [registrationId, userId]
+    );
+    return rows[0];
   },
 
   // Powers "View Participants" on the Manager Dashboard

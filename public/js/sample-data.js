@@ -3,7 +3,6 @@
 // GET /api/events actually returns, so createEventCard() in main.js
 // doesn't need to know which source it's rendering.
 
-
 const SAMPLE_EVENTS = [
   {
     title: 'Riverside Music Night',

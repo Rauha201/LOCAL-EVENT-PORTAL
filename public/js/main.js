@@ -230,6 +230,20 @@ function reflectAuthState() {
   document.querySelectorAll('#nav-registrations-link, #mobile-nav-registrations-link').forEach((el) => {
     el.classList.toggle('hidden', role !== 'user');
   });
+
+  // BUG FIX: the homepage's "Post an Event" button (index.html) used
+  // to hardcode href="/register.html" — so a logged-in manager
+  // clicking it was sent to create a brand-new account instead of
+  // their own dashboard where posting actually happens. It now points
+  // a logged-in manager straight to /dashboard.html. A logged-in user
+  // or admin (roles that don't post events) still goes to
+  // /register.html to register as a manager, same as a signed-out
+  // visitor always did.
+  const postEventLink = document.getElementById('post-event-link');
+  if (postEventLink && role === 'manager') {
+    postEventLink.href = '/dashboard.html';
+    postEventLink.textContent = 'Post an Event';
+  }
 }
 
 function logout() {

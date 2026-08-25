@@ -1,25 +1,5 @@
-//update
 const EventModel = require('../models/eventModel');
-
-const CATEGORIES = ['Concert', 'Meetup', 'Workshop', 'Sports', 'Festival'];
-
-function validateEventInput(body) {
-  const { title, category, eventDate, eventTime, location, organizer, ticketPrice, maxParticipants } = body;
-
-  if (!title || !category || !eventDate || !eventTime || !location || !organizer) {
-    return 'Title, category, date, time, location and organizer are all required';
-  }
-  if (!CATEGORIES.includes(category)) {
-    return `Category must be one of: ${CATEGORIES.join(', ')}`;
-  }
-  if (ticketPrice !== undefined && Number(ticketPrice) < 0) {
-    return 'Ticket price cannot be negative';
-  }
-  if (maxParticipants !== undefined && Number(maxParticipants) < 1) {
-    return 'Maximum participants must be at least 1';
-  }
-  return null;
-}
+const { validateEventInput } = require('../utils/eventValidation');
 
 // Public — anyone can browse events, no token needed.
 async function getAllEvents(req, res, next) {

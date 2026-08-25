@@ -7,7 +7,6 @@
 // built around the idea that every listing is a printed ticket
 // stub pinned to a community board.
 
-
 tailwind.config = {
   theme: {
     extend: {

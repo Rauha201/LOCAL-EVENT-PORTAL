@@ -1,4 +1,3 @@
-//update
 const bcrypt = require('bcryptjs');
 const AdminModel = require('../models/adminModel');
 const UserModel = require('../models/userModel');

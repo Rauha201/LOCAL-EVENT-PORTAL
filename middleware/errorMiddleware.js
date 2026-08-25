@@ -1,4 +1,3 @@
-
 // Two small, reusable middlewares that keep try/catch error
 // handling out of every controller. server.js loads them last,
 // after every route, so they catch whatever falls through.

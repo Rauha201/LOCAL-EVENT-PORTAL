@@ -199,3 +199,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('event-form').addEventListener('submit', handleFormSubmit);
   document.getElementById('event-list').addEventListener('click', handleListClick);
 });
+

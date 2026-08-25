@@ -1,3 +1,4 @@
+
 const bcrypt = require('bcryptjs');
 const ManagerModel = require('../models/managerModel');
 const generateToken = require('../utils/generateToken');

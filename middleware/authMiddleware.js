@@ -1,4 +1,3 @@
-
 // protect()   confirms the request carries a valid JWT.
 // authorize() confirms that token belongs to an allowed role.
 // Used together on a route, e.g.:
